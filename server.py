@@ -160,7 +160,7 @@ def index():
 #
 @app.route('/school')
 def school():
-  cursor = g.conn.execute("SELECT S.name school_name, S.state school_state, T.cid, T.team_name, St.sid, St.name student_name FROM School S, DebatesFor_EnrollsIn as DFEI, Team as T, Students as St WHERE S.state = DFEI.school_state AND S.name = DFEI.school_name AND T.team_name = DFEI.team_name AND T.cid = DFEI.cid AND St.sid = DFEI.sid")
+  cursor = g.conn.execute("SELECT name FROM school")
   names = []
   for result in cursor:
     names.append(result[0])  # can also be accessed using result[0]
@@ -170,7 +170,7 @@ def school():
 
 @app.route('/student')
 def student():
-  cursor = g.conn.execute("SELECT name FROM circuit")
+  cursor = g.conn.execute("SELECT name FROM students")
   names = []
   for result in cursor:
     names.append(result['name'])  # can also be accessed using result[0]
@@ -180,10 +180,10 @@ def student():
 
 @app.route('/team')
 def team():
-  cursor = g.conn.execute("SELECT name FROM circuit")
+  cursor = g.conn.execute("SELECT team_name FROM team")
   names = []
   for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
+    names.append(result['team_name'])  # can also be accessed using result[0]
   cursor.close()
   context = dict(data = names)
   return render_template("team.html", **context)
@@ -218,6 +218,115 @@ def schoolByPoints():
   cursor.close()
   context = dict(data = names)
   return render_template('school.html', **context)
+
+#students
+
+@app.route('/studentByWins', methods=['POST'])
+def studentByWins():
+  circuit_region = request.form['circuit_region']
+  circuit_name = request.form['circuit_name']
+  cursor = g.conn.execute("SELECT AR.sid, AR.student_name, ROUND(AVG(AR.won::INT),3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.won::INT) DESC;", circuit_name, circuit_region)
+  names = []
+  for result in cursor:
+      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('student.html', **context)
+
+@app.route('/studentByPoints', methods=['POST'])
+def studentByPoints():
+  circuit_region = request.form['circuit_region']
+  circuit_name = request.form['circuit_name']
+  cursor = g.conn.execute("SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric,3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC;", circuit_name, circuit_region)
+  names = []
+  for result in cursor:
+      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('student.html', **context)
+
+#teams
+
+@app.route('/teamByWins', methods=['POST'])
+def teamByWins():
+  circuit_region = request.form['circuit_region']
+  circuit_name = request.form['circuit_name']
+  cursor = g.conn.execute("SELECT AR.cid, AR.team_name, ROUND(AVG(AR.won::INT),3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.cid, AR.team_name ORDER BY AVG(AR.won::INT) DESC;", circuit_name, circuit_region)
+  names = []
+  for result in cursor:
+      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('team.html', **context)
+
+@app.route('/teamByPoints', methods=['POST'])
+def teamByPoints():
+  circuit_region = request.form['circuit_region']
+  circuit_name = request.form['circuit_name']
+  cursor = g.conn.execute("SELECT AR.cid, AR.team_name, ROUND(AVG(AR.speaker_points)::numeric,3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.cid, AR.team_name ORDER BY AVG(AR.speaker_points) DESC;", circuit_name, circuit_region)
+  names = []
+  for result in cursor:
+      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('team.html', **context)
+
+#RECORDS
+#student
+
+
+@app.route('/findStudentID', methods=['POST'])
+def findStudentID():
+  student_name = '%' + request.form['student_name'] + '%'
+  cursor = g.conn.execute("SELECT DISTINCT AR.student_name, AR.school_name, AR.sid, AR.circuit_name, AR.region FROM Aggregate_Rounds AR WHERE AR.student_name LIKE %s", student_name)  
+  names = []
+  for result in cursor:
+      names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('student.html', **context)
+
+@app.route('/findStudentRank', methods=['POST'])
+def findStudentRank():
+  student_id = request.form['student_id']
+  circuit_name = request.form['circuit_name']
+  circuit_region = request.form['circuit_region']
+  if not circuit_name or not circuit_region:
+    cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",student_id)
+  else:
+    cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR WHERE  AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",circuit_name, circuit_region, student_id)
+  names = []
+  for result in cursor:
+      names.append(result[0])  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('student.html', **context)
+
+
+@app.route('/teamInRounds', methods=['POST'])
+def teamInRounds():
+  student_id = request.form['student_id'] 
+  circuit_name = request.form['circuit_name']
+  circuit_region = request.form['circuit_region']
+  cursor = g.conn.execute("SELECT PIRW.team_name, PIRW.speaker_points, PIRW.won, PIRW.t_name, PIRW.number FROM ParticipatesIn_RegisteredWith as PIRW WHERE PIRW.cid = %s AND PIRW.circuit_name = %s AND PIRW.region = %s", student_id, circuit_name, circuit_region)
+  names = []
+  for result in cursor:
+      names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('team.html', **context)
+
+
+@app.route('/findStudentIDTeams', methods=['POST'])
+def findStudentIDTeams():
+  student_name = '%' + request.form['student_name'] + '%'
+  cursor = g.conn.execute("SELECT DISTINCT AR.student_name, AR.school_name, AR.sid, AR.circuit_name, AR.region FROM Aggregate_Rounds AR WHERE AR.student_name LIKE %s", student_name)  
+  names = []
+  for result in cursor:
+      names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('team.html', **context)
 @app.route('/login')
 def login():
     abort(401)

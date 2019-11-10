@@ -9,7 +9,7 @@
 
 
 <body>
-  <h1>Rankings for school</h1>
+  <h1>Teams</h1>
   <div>{{data}}</div>
 
   <div>
@@ -17,6 +17,30 @@
     <div>{{n}}</div>
     {% endfor %}
   </div>
+  <p> </p> 
 
+  <b> Teams ranked by win percentage based on circuit name and region </b>
+<form method="POST" action="/teamByWins">
+	<p><em>circuit_name</em> <input type="text" name="circuit_name"><em>circuit_region</em> <input type="text" name="circuit_region"> <input type="submit" value="Get"></p>
+</form>
+  
+<p> </p>
+<b> Teams ranked by speaker points based on circuit name and region </b>
+<form method="POST" action="/teamByPoints">
+	<p><em>circuit_name</em> <input type="text" name="circuit_name"><em>circuit_region</em> <input type="text" name="circuit_region"> <input type="submit" value="Get"></p>
+</form>
+
+  <b> Find studentID. Enter student name </b>
+<form method="POST" action="/findStudentIDTeams">
+	<p><em>student name</em> <input type="text" name="student_name"> <input type="submit" value="Get"></p>
+</form>
+
+
+<p> </p>
+<b> Find what teams the student has participated in as well as their respective tournaments. Enter studentID. </b>
+<form method="POST" action="/teamInRounds">
+	<p><em>studentID</em> <input type="text" name="student_id"> <em>circuit name</em> <input type="text" name="circuit_name"> <em>circuit region</em> <input type="text" name="circuit_region"> <input type="submit" value="Get"></p>
+</form>
 <p><a href="/">Go to the main page</a></p>
+<body>
 </html>
