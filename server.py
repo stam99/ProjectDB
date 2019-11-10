@@ -327,6 +327,9 @@ def findStudentIDTeams():
   cursor.close()
   context = dict(data = names)
   return render_template('team.html', **context)
+
+#School
+
 @app.route('/login')
 def login():
     abort(401)
