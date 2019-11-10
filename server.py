@@ -29,7 +29,7 @@ app = Flask(__name__, template_folder=tmpl_dir)
 #
 #     DATABASEURI = "postgresql://gravano:foobar@35.243.220.243/proj1part2"
 #
-DATABASEURI = "postgresql://user:password@35.243.220.243/proj1part2"
+DATABASEURI = "postgresql://sgt2118:2876@35.243.220.243/proj1part2"
 
 
 #
@@ -108,7 +108,7 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
+  cursor = g.conn.execute("SELECT name FROM circuit")
   names = []
   for result in cursor:
     names.append(result['name'])  # can also be accessed using result[0]
@@ -157,10 +157,23 @@ def index():
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
 #
-@app.route('/another')
-def another():
-  return render_template("another.html")
+@app.route('/school')
+def school():
+  cursor = g.conn.execute("SELECT name FROM circuit")
+  names = []
+  for result in cursor:
+    names.append(result['name'])  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template("school.html", **context)
 
+@app.route('/student')
+def student():
+  return render_template("student.html")
+
+@app.route('/team')
+def team():
+  return render_template("team.html")
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
