@@ -17,6 +17,19 @@
     <div>{{n}}</div>
     {% endfor %}
   </div>
+  <p> </p> 
+
+  <b> Schools ranked by wins based on circuit name and region </b>
+<form method="POST" action="/schoolByWins">
+	<p><em>circuit_name</em> <input type="text" name="circuit_name"><em>circuit_region</em> <input type="text" name="circuit_region"> <input type="submit" value="Get"></p>
+</form>
+  
+<p> </p>
+<b> Schools ranked by speaker points based on circuit name and region </b>
+<form method="POST" action="/schoolByPoints">
+	<p><em>circuit_name</em> <input type="text" name="circuit_name"><em>circuit_region</em> <input type="text" name="circuit_region"> <input type="submit" value="Get"></p>
+</form>
 
 <p><a href="/">Go to the main page</a></p>
+<body>
 </html>

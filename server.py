@@ -34,7 +34,8 @@ DATABASEURI = "postgresql://sgt2118:2876@35.243.220.243/proj1part2"
 
 #
 # This line creates a database engine that knows how to connect to the URI above.
-#
+
+
 engine = create_engine(DATABASEURI)
 
 #
@@ -159,21 +160,33 @@ def index():
 #
 @app.route('/school')
 def school():
-  cursor = g.conn.execute("SELECT name FROM circuit")
+  cursor = g.conn.execute("SELECT S.name school_name, S.state school_state, T.cid, T.team_name, St.sid, St.name student_name FROM School S, DebatesFor_EnrollsIn as DFEI, Team as T, Students as St WHERE S.state = DFEI.school_state AND S.name = DFEI.school_name AND T.team_name = DFEI.team_name AND T.cid = DFEI.cid AND St.sid = DFEI.sid")
   names = []
   for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
+    names.append(result[0])  # can also be accessed using result[0]
   cursor.close()
   context = dict(data = names)
   return render_template("school.html", **context)
 
 @app.route('/student')
 def student():
-  return render_template("student.html")
+  cursor = g.conn.execute("SELECT name FROM circuit")
+  names = []
+  for result in cursor:
+    names.append(result['name'])  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template("student.html", **context)
 
 @app.route('/team')
 def team():
-  return render_template("team.html")
+  cursor = g.conn.execute("SELECT name FROM circuit")
+  names = []
+  for result in cursor:
+    names.append(result['name'])  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template("team.html", **context)
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
@@ -182,7 +195,29 @@ def add():
   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
   return redirect('/')
 
+@app.route('/schoolByWins', methods=['POST'])
+def schoolByWins():
+  circuit_region = request.form['circuit_region']
+  circuit_name = request.form['circuit_name']
+  cursor = g.conn.execute("SELECT AR.school_name, AR.school_state, ROUND(AVG(AR.won::INT),3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.school_name, AR.school_state ORDER BY AVG(AR.won::INT) DESC;", circuit_name, circuit_region)
+  names = []
+  for result in cursor:
+      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('school.html', **context)
 
+@app.route('/schoolByPoints', methods=['POST'])
+def schoolByPoints():
+  circuit_region = request.form['circuit_region']
+  circuit_name = request.form['circuit_name']
+  cursor = g.conn.execute("SELECT AR.school_name, AR.school_state, ROUND(AVG(AR.speaker_points)::numeric,3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.school_name, AR.school_state ORDER BY AVG(AR.speaker_points) DESC;", circuit_name, circuit_region)
+  names = []
+  for result in cursor:
+      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('school.html', **context)
 @app.route('/login')
 def login():
     abort(401)
