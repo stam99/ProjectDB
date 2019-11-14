@@ -1,0 +1,27 @@
+
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>Insert Judge</h1>
+  <div>{{data}}</div>
+
+  <div>
+    {% for n in data %}
+    <div>{{n}}</div>
+    {% endfor %}
+  </div>
+  <p> </p> 
+
+  <b> Insert Judge</b>
+<form method="POST" action="/insertJudging">
+	<p><em>judge id</em><input type="text" name="sid"><em>name</em><input type="text" name = "name"><em>gender</em><input type="text" name="gender"> <input type="submit" value="Insert"></p>
+</form>
+  
+</html>

@@ -188,6 +188,54 @@ def team():
   context = dict(data = names)
   return render_template("team.html", **context)
 
+@app.route('/insertParticipants')
+def insertParticipants():
+  cursor = g.conn.execute("SELECT name FROM students")
+  names = []
+  for result in cursor:
+    names.append(result['name'])  # can also be accessed using result[0]
+  cursor.close() 
+  context = dict(data = names)
+  return render_template("insertParticipants.html", **context)
+
+@app.route('/insertStudents', methods=['POST'])
+def insertStudents():
+  name = request.form['name']
+  sid = request.form['sid']
+  gender = request.form['gender']
+  g.conn.execute("INSERT INTO Students (sid, name, gender) VALUES (%s, %s, %s);", sid, name, gender)
+  cursor = g.conn.execute("SELECT name FROM students")
+  names = []
+  for result in cursor:
+    names.append(result['name'])  # can also be accessed using result[0]
+  cursor.close() 
+  context = dict(data = names)
+  return render_template("insertParticipants.html", **context)
+
+@app.route('/insertJudges')
+def insertJudges():
+  cursor = g.conn.execute("SELECT name FROM judge")
+  names = []
+  for result in cursor:
+    names.append(result['name'])  # can also be accessed using result[0]
+  cursor.close() 
+  context = dict(data = names)
+  return render_template("insertJudges.html", **context)
+
+@app.route('/insertJudging', methods=['POST'])
+def insertJudging():
+  name = request.form['name']
+  sid = request.form['sid']
+  gender = request.form['gender']
+  g.conn.execute("INSERT INTO Judge(j_id, name, gender) VALUES (%s, %s, %s);", sid, name, gender)
+  cursor = g.conn.execute("SELECT name FROM judge")
+  names = []
+  for result in cursor:
+    names.append(result['name'])  # can also be accessed using result[0]
+  cursor.close() 
+  context = dict(data = names)
+  return render_template("insertJudges.html", **context)
+
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
 def add():
@@ -211,6 +259,7 @@ def schoolByWins():
 def schoolByPoints():
   circuit_region = request.form['circuit_region']
   circuit_name = request.form['circuit_name']
+  print(circuit_name, circuit_region)
   cursor = g.conn.execute("SELECT AR.school_name, AR.school_state, ROUND(AVG(AR.speaker_points)::numeric,3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.school_name, AR.school_state ORDER BY AVG(AR.speaker_points) DESC;", circuit_name, circuit_region)
   names = []
   for result in cursor:
@@ -284,17 +333,35 @@ def findStudentID():
       names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
   cursor.close()
   context = dict(data = names)
-  return render_template('student.html', **context)
+  return render_template('student2.html', **context)
 
-@app.route('/findStudentRank', methods=['POST'])
-def findStudentRank():
-  student_id = request.form['student_id']
-  circuit_name = request.form['circuit_name']
-  circuit_region = request.form['circuit_region']
+
+@app.route('/studentID', methods=['GET', 'POST'])
+def studentID():
+  string = request.args.get('query')
+  def parse_string(string):
+    split_list = string[1:-1].split(",")
+    
+    for i, element in enumerate(split_list):
+       split_list[i] = element.lstrip().replace("'","")
+
+        
+    return split_list  
+  data = parse_string(string)
+  print(data)
+  print(data[2], data[3], data[4])
+  student_id = data[2]
+  circuit_name = data[3]
+  circuit_region = data[4]
+  #student_id = request.form['student_id']
+  #circuit_name = request.form['circuit_name']
+  #circuit_region = request.form['circuit_region']
+  cursor = None
   if not circuit_name or not circuit_region:
     cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",student_id)
   else:
-    cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR WHERE  AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",circuit_name, circuit_region, student_id)
+    cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR WHERE  AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",circuit_name, circuit_region, student_id) 
+  
   names = []
   for result in cursor:
       names.append(result[0])  # can also be accessed using result[0]
