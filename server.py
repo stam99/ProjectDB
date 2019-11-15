@@ -167,6 +167,15 @@ def school():
   context = dict(data = names)
   return render_template("school.html", **context)
 
+@app.route('/viewschool')
+def viewschool():
+  cursor = g.conn.execute("SELECT name, state FROM school")
+  names = []
+  for result in cursor:
+    names.append(result['name'] + "," + str(result['state']))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template("viewschool.html", **context)
 @app.route('/student')
 def student():
   cursor = g.conn.execute("SELECT name FROM students")
@@ -222,12 +231,7 @@ def insertParticipants():
 def registerStudentIntoTeam():
     string = request.args.get('query')
     data = string.split(",")
-    school_name, school_state = None, None
-    cursor2 = g.conn.execute("SELECT DFEI.school_state, DFEI.school_name FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.sid = Students.sid AND Students.sid = %s", data[1])
-    for result in cursor2:
-        school_name = "'"+ result['school_name'] + "'"
-        school_state = "'" +result['school_state'] + "'"
-    sql = "INSERT INTO DebatesFor_EnrollsIn(cid, team_name, sid, school_state, school_name) VALUES(%s, %s, " + data[1] + ", " + school_state + ", " + school_name +")"
+    sql = "INSERT INTO DebatesFor_EnrollsIn(cid, team_name, sid, school_state, school_name) VALUES(%s, %s, " + data[1] + ", %s, %s)"
     session['my_var'] = sql
     session['cid'] = data[1]
     cursor = g.conn.execute("SELECT team_name, cid FROM team")
@@ -241,17 +245,19 @@ def registerStudentIntoTeam():
 
 @app.route('/registerIntoTeam')
 def registerIntoTeam():
-  data = session.get('my_var', None)
-  print("OVER HERE")
+  data = session.get('my_var', None) #sql string already with sid
   print(data)
-  string = request.args.get('query')
-  print("HEREEEE")
+  string = request.args.get('query') #team
   print(string)
-
   query = string.split(",")
   cid = query[1]
   team_name = query[0] 
-  g.conn.execute(data, cid, team_name)
+  school_name, school_state = None, None
+  cursor2 = g.conn.execute("SELECT DFEI.school_state, DFEI.school_name FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.team_name = %s  AND DFEI.cid = %s", team_name, cid)
+  for result in cursor2:
+    school_name = result['school_name']
+    school_state = result['school_state']
+  g.conn.execute(data, cid, team_name, school_state, school_name)
   cursor = g.conn.execute("SELECT team_name, cid FROM team")
   names = []
   for result in cursor:
@@ -265,6 +271,9 @@ def insertStudents():
   name = request.form['name']
   sid = request.form['sid']
   gender = request.form['gender']
+  school_name = request.form['school_name']
+  school_state = request.form['school_state']
+  
   g.conn.execute("INSERT INTO Students (sid, name, gender) VALUES (%s, %s, %s);", sid, name, gender)
   cursor = g.conn.execute("SELECT name FROM students")
   names = []
@@ -454,13 +463,14 @@ def teamInRounds():
   circuit_name = data[3]
   circuit_region = data[4]
   cursor = None
-  cursor = g.conn.execute("SELECT PIRW.team_name, PIRW.speaker_points, PIRW.won, PIRW.t_name, PIRW.number FROM ParticipatesIn_RegisteredWith as PIRW WHERE PIRW.cid = %s AND PIRW.circuit_name = %s AND PIRW.region = %s", student_id, circuit_name, circuit_region)
+  cursor = g.conn.execute("SELECT PIRW.team_name, PIRW.cid, PIRW.speaker_points, PIRW.won, PIRW.t_name, PIRW.number FROM ParticipatesIn_RegisteredWith as PIRW WHERE PIRW.cid = %s AND PIRW.circuit_name = %s AND PIRW.region = %s", student_id, circuit_name, circuit_region)
   names = []
   for result in cursor:
-      names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
+      names.append(result['team_name'] + "," + str(result['cid']) + "," + str(result[3]) + ", did win: " + str(result[4]) + "," + str(result[5]))
   cursor.close()
+  print(names)
   context = dict(data = names)
-  return render_template('team.html', **context)
+  return render_template('viewteam.html', **context)
 
 
 @app.route('/findStudentIDTeams', methods=['POST'])
@@ -491,6 +501,20 @@ def viewStudentsInTeam():
     return render_template('viewstudent.html', **context)
 #School
 
+@app.route('/viewStudentsInSchool', methods=['GET', 'POST'])
+def viewStudentsInSchool():
+    data = request.args.get('query')
+    string = data.split(",")
+    print(string)
+    cursor = g.conn.execute("SELECT DISTINCT Students.name, Students.sid FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.school_name = %s AND DFEI.school_state = %s AND DFEI.sid = Students.sid", string[0], string[1])
+    names = []
+    names.append("All of the students in school " + string[0])
+    for result in cursor:
+        names.append(result[0] + " " + str(result[1]))
+    print(names)
+    cursor.close()
+    context = dict(data = names)
+    return render_template('viewstudent.html', **context)
 @app.route('/login')
 def login():
     abort(401)
