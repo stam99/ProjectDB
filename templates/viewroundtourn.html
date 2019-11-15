@@ -9,15 +9,15 @@
 
 
 <body>
-  <h1>Here are all of the students with the same name. Click on student to view their rounds.. </h1>
+  <h1>Here are all of the tournament rounds. Click on rounds to see more.. </h1>
   <div>
     {% for n in data %}
-    <td><a href = "/teamInRounds?query={{n}}">{{n}}</a></td>
+    <td><a href = "viewRoundInfo?query={{n}}">{{n}}</a></td>
     <p></p>
     {% endfor %}
   </div>
   <p> </p> 
 
-<p><a href="/team">Go back</a></p>
+<p><a href="/viewtournament">Go back</a></p>
 <body>
 </html>

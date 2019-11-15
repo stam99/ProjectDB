@@ -1,0 +1,29 @@
+
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>Rounds:</h1>
+
+  <div>
+    {% for n in data %}
+    <div>{{n}}</div>
+    {% endfor %}
+  </div>
+  <p> </p> 
+
+
+  <b> Insert new record</b>
+  
+<form method="POST" action="/insertRecord">
+	<p><em>team captain sid</em><input type="text" name="cid"><em>team name</em><input type="text" name = "t_name"><em>speaker_points</em><input type="text" name="speaker_points"><em>circuit_name</em><input type="text" name="circuit_name"> <em>circuit_region</em><input type="text" name="circuit_region"><em>Did win? TRUE/FALSE</em><input type='text' name = "won"><em>judge id</em><input type="text" name="j_id"><input type="submit" value="Insert"></p>
+</form>
+<p><a href="/">Go to the main page</a></p>
+<body>
+</html>

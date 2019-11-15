@@ -108,11 +108,6 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM circuit")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close()
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -176,6 +171,8 @@ def viewschool():
   cursor.close()
   context = dict(data = names)
   return render_template("viewschool.html", **context)
+
+
 @app.route('/student')
 def student():
   cursor = g.conn.execute("SELECT name FROM students")
@@ -216,6 +213,27 @@ def viewteam():
   cursor.close()
   context = dict(data = names)
   return render_template("viewteam.html", **context)
+
+@app.route('/viewtournament')
+def viewtournament():
+  cursor = g.conn.execute("SELECT t_name FROM tournament")
+  names = []
+  for result in cursor:
+    names.append(result['t_name'])  # can also be accessed using result[0]
+  cursor.close() 
+  context = dict(data = names)
+  return render_template("viewtournament.html", **context)
+
+
+@app.route('/managetournament')
+def managetournament():
+  cursor = g.conn.execute("SELECT t_name FROM tournament")
+  names = []
+  for result in cursor:
+    names.append(result['t_name'])  # can also be accessed using result[0]
+  cursor.close() 
+  context = dict(data = names)
+  return render_template("managetournament.html", **context)
 
 @app.route('/insertParticipants')
 def insertParticipants():
@@ -266,6 +284,26 @@ def registerIntoTeam():
   context = dict(data = names)
   return render_template("viewteam.html", **context)
 
+@app.route('/insertRecord', methods = ['GET', 'POST'])
+def insertRecord():
+  cid = request.form['cid']
+  number = session['number']
+  t_name = session['t_name']
+  team_name = request.form['t_name']
+  speaker_points = request.form['speaker_points']
+  circuit_name = request.form['circuit_name']
+  circuit_region = request.form['circuit_region']
+  j_id = request.form['j_id']
+  won = request.form['won']
+  g.conn.execute("INSERT INTO ParticipatesIn_RegisteredWith(cid, team_name, j_id, t_name, number, speaker_points, circuit_name, region, won) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", cid, team_name, j_id, t_name, number, speaker_points, circuit_name, circuit_region, won)
+  cursor = g.conn.execute("SELECT DISTINCT AR.cid, AR.team_name, AR.j_id, AR.speaker_points, AR.won FROM Aggregate_Rounds AR WHERE AR.t_name = %s AND AR.number = %s", t_name, number)
+  names = []
+  for result in cursor:
+    names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
+  cursor.close()
+  context = dict(data = names)
+  return render_template('viewroundmanage.html', **context)
+
 @app.route('/insertStudents', methods=['POST'])
 def insertStudents():
   name = request.form['name']
@@ -273,12 +311,11 @@ def insertStudents():
   gender = request.form['gender']
   school_name = request.form['school_name']
   school_state = request.form['school_state']
-  
   g.conn.execute("INSERT INTO Students (sid, name, gender) VALUES (%s, %s, %s);", sid, name, gender)
-  cursor = g.conn.execute("SELECT name FROM students")
+  cursor = g.conn.execute("SELECT name, sid FROM students")
   names = []
   for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
+    names.append(result['name'] + "," + result['sid'])  # can also be accessed using result[0]
   cursor.close() 
   context = dict(data = names)
   return render_template("insertParticipants.html", **context)
@@ -294,7 +331,7 @@ def insertTeam():
       names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
     cursor.close()
     context = dict(data = names)
-    return render_template("registerTeam.html", **context)
+    return render_template("viewteam.html", **context)
 
 @app.route('/insertJudges')
 def insertJudges():
@@ -319,6 +356,31 @@ def insertJudging():
   cursor.close() 
   context = dict(data = names)
   return render_template("insertJudges.html", **context)
+
+
+@app.route('/insertTournament')
+def insertTournament():
+  cursor = g.conn.execute("SELECT t_name FROM tournament")
+  names = []
+  for result in cursor:
+    names.append(result['t_name'])  # can also be accessed using result[0]
+  cursor.close() 
+  context = dict(data = names)
+  return render_template("insertTournament.html", **context)
+
+
+@app.route('/insertTournamenting', methods=['POST'])
+def insertTournamenting():
+  name = request.form['t_name']
+  state = request.form['state']
+  g.conn.execute("INSERT INTO Tournament(t_name, state) VALUES (%s, %s);", name, state)
+  cursor = g.conn.execute("SELECT t_name FROM tournament")
+  names = []
+  for result in cursor:
+    names.append(result['t_name'])  # can also be accessed using result[0]
+  cursor.close() 
+  context = dict(data = names)
+  return render_template("insertTournament.html", **context)
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
@@ -466,12 +528,42 @@ def teamInRounds():
   cursor = g.conn.execute("SELECT PIRW.team_name, PIRW.cid, PIRW.speaker_points, PIRW.won, PIRW.t_name, PIRW.number FROM ParticipatesIn_RegisteredWith as PIRW WHERE PIRW.cid = %s AND PIRW.circuit_name = %s AND PIRW.region = %s", student_id, circuit_name, circuit_region)
   names = []
   for result in cursor:
-      names.append(result['team_name'] + "," + str(result['cid']) + "," + str(result[3]) + ", did win: " + str(result[4]) + "," + str(result[5]))
+      names.append(result['team_name'] + "," + str(result['cid']) + ", STATUS WON:" + str(result[3]) + "," + str(result[4]) + "," + str(result[5]))
   cursor.close()
   print(names)
   context = dict(data = names)
-  return render_template('viewteam.html', **context)
+  return render_template('viewround.html', **context)
 
+@app.route('/findStudentSchool', methods = ['POST'])
+def findStudentSchool():
+  student_name = '%' + request.form['student_name'] + '%'
+  cursor = g.conn.execute("SELECT DISTINCT AR.student_name, AR.school_name, AR.sid, AR.circuit_name, AR.region FROM Aggregate_Rounds AR WHERE AR.student_name LIKE %s", student_name)  
+  names = []
+  for result in cursor:
+      names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('studentSchool.html', **context)
+
+#student to school
+@app.route('/studentToSchool', methods = ['GET', 'POST'])
+def studentToSchool():
+  string = request.args.get('query')
+  def parse_string(string):
+    split_list = string[1:-1].split(",")
+    for i, element in enumerate(split_list):
+       split_list[i] = element.lstrip().replace("'","")
+    return split_list  
+  data = parse_string(string)
+  student_id = data[2]
+  query = "SELECT DISTINCT AR.school_name, AR.school_state FROM Aggregate_Rounds as AR WHERE AR.sid = %s"
+  cursor = g.conn.execute(query, student_id)
+  names = []
+  for result in cursor:
+    names.append(result['school_name'] + "," + str(result['school_state']))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template('viewschool.html', **context)
 
 @app.route('/findStudentIDTeams', methods=['POST'])
 def findStudentIDTeams():
@@ -483,7 +575,6 @@ def findStudentIDTeams():
   cursor.close()
   context = dict(data = names)
   return render_template('team2.html', **context)
-
 
 @app.route('/viewStudentsInTeam', methods=['GET', 'POST'])
 def viewStudentsInTeam():
@@ -515,6 +606,57 @@ def viewStudentsInSchool():
     cursor.close()
     context = dict(data = names)
     return render_template('viewstudent.html', **context)
+
+@app.route('/viewRoundInTournament', methods=['GET', 'POST'])
+def viewRoundInTournament():
+    data = request.args.get('query')
+    session['t_name'] = data
+    cursor = g.conn.execute("SELECT R.number FROM Tournament T, Round R WHERE T.t_name = R.t_name AND T.t_name = %s", data)
+    names = []
+    for result in cursor:
+        names.append(result[0])
+    cursor.close()
+    context = dict(data = names)
+    return render_template('viewroundtourn.html', **context)
+
+@app.route('/viewRoundInTournamentManage', methods=['GET', 'POST'])
+def viewRoundInTournamentManage():
+    data = request.args.get('query')
+    session['t_name'] = data
+    cursor = g.conn.execute("SELECT R.number FROM Tournament T, Round R WHERE T.t_name = R.t_name AND T.t_name = %s", data)
+    names = []
+    for result in cursor:
+        names.append(result[0])
+    cursor.close()
+    context = dict(data = names)
+    return render_template('viewroundtournmanage.html', **context)
+
+@app.route('/viewRoundInfo', methods=['GET','POST'])
+def viewRoundInfo():
+    number = request.args.get('query')
+    t_name = session['t_name']
+    cursor = g.conn.execute("SELECT DISTINCT AR.cid, AR.team_name, AR.j_id, AR.speaker_points, AR.won FROM Aggregate_Rounds AR WHERE AR.t_name = %s AND AR.number = %s", t_name, number)
+    names = []
+    for result in cursor:
+        names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
+    cursor.close()
+    context = dict(data = names)
+    return render_template('viewround.html', **context)
+
+
+@app.route('/viewRoundInfoManage', methods=['GET','POST'])
+def viewRoundInfoManage():
+    number = request.args.get('query')
+    t_name = session['t_name']
+    session['number'] = number
+    cursor = g.conn.execute("SELECT DISTINCT AR.cid, AR.team_name, AR.j_id, AR.speaker_points, AR.won FROM Aggregate_Rounds AR WHERE AR.t_name = %s AND AR.number = %s", t_name, number)
+    names = []
+    for result in cursor:
+        names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
+    cursor.close()
+    context = dict(data = names)
+    return render_template('viewroundmanage.html', **context)
+
 @app.route('/login')
 def login():
     abort(401)

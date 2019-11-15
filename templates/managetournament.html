@@ -9,15 +9,17 @@
 
 
 <body>
-  <h1>Here are all of the students with the same name. Click on student to view their rounds.. </h1>
+  <h1>Manage Tournaments</h1>
+   
+  <em>Click to manage tournament</em>
   <div>
     {% for n in data %}
-    <td><a href = "/teamInRounds?query={{n}}">{{n}}</a></td>
+    <td><a href = "/viewRoundInTournamentManage?query={{n}}">{{n}}</a></td>
     <p></p>
     {% endfor %}
   </div>
   <p> </p> 
 
-<p><a href="/team">Go back</a></p>
+<p><a href="/">Go to the main page</a></p>
 <body>
 </html>
