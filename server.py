@@ -135,6 +135,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
+  names = []
   context = dict(data = names)
 
 
@@ -181,6 +182,24 @@ def viewschool():
   return render_template("viewschool.html", **context)
 
 
+@app.route('/tools')
+def tools():
+  cursor = g.conn.execute("SELECT ROUND((AVG(PIRW.speaker_points) - (SELECT AVG(PIRW.speaker_points) FROM ParticipatesIn_RegisteredWith PIRW))::numeric,3) as difference_from_mean,PIRW.j_id AS Judge_ID, J.name, COUNT(*) Rounds_Judged FROM ParticipatesIn_RegisteredWith AS PIRW,Judge as J WHERE PIRW.j_id = J.j_id GROUP BY PIRW.j_id, J.name ORDER BY difference_from_mean DESC, COUNT(*)")
+  names = []
+  for result in cursor:
+    print(result)  
+    names.append(str(result[0]) + ", Judge id: " + str(result[1]) + ", Judge name: "  + str(result[2]))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template("tools.html", **context)
+
+@app.route('/pointJudge', methods = ['POST'])
+def judgePoints():
+    jid = request.form['jid']
+    points = request.form['points']
+    g.conn.execute("UPDATE ParticipatesIn_RegisteredWith as PIRW SET speaker_points = speaker_points + %s WHERE PIRW.j_id = %s", points, jid)
+    return render_template("tools.html")
+
 @app.route('/student')
 def student():
   try:
@@ -195,6 +214,31 @@ def student():
   context = dict(data = names)
   return render_template("student.html", **context)
 
+
+@app.route('/ranking')
+def ranking():
+  cursor = g.conn.execute("SELECT name, sid FROM students")
+  names = []
+  for result in cursor:
+     names.append(result['name'] + ", and their student id: " + str(result['sid'])) # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template("ranking.html", **context)
+
+
+@app.route('/rankingHyp', methods = ['POST'])
+def rankingHyp():
+    sid = request.form['sid']
+    cirname = request.form['circuit_name']
+    cirregion = request.form['circuit_region']
+    rankhyp = request.form['rank']
+    cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, AVG(AR.won::INT) AVG FROM Aggregate_rounds AR WHERE  AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.won::INT) DESC) SELECT Round(((SELECT Student_Rank.avg FROM Student_Rank LIMIT 1 OFFSET %s)*Count(*) - SUM(AR.won::int))/(.00001 + 1 - (SELECT Student_Rank.avg FROM Student_Rank LIMIT 1 OFFSET %s))) FROM Aggregate_Rounds AR WHERE AR.sid = %s AND AR.circuit_name =%s AND AR.region =%s GROUP BY AR.sid", cirname, cirregion, rankhyp, rankhyp, sid, cirname, cirregion)
+    names = []
+    for result in cursor:
+        names.append(result[0])
+    cursor.close()
+    context = dict(data = names)
+    return render_template("ranking.html", **context)
 
 @app.route('/viewstudent')
 def viewstudent():
