@@ -162,7 +162,7 @@ def school():
         names.append(result[0] + " " + result[1])  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("school.html", **context)
@@ -176,7 +176,7 @@ def viewschool():
         names.append(result['name'] + "," + str(result['state']))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("viewschool.html", **context)
@@ -209,7 +209,7 @@ def student():
         names.append(result['name'])  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("student.html", **context)
@@ -249,7 +249,7 @@ def viewstudent():
         names.append(result['name'])  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
   context = dict(data = names)
   return render_template("viewstudent.html", **context)
 
@@ -262,7 +262,7 @@ def team():
         names.append(result['team_name'])  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("team.html", **context)
@@ -276,7 +276,7 @@ def viewteam():
         names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("viewteam.html", **context)
@@ -290,7 +290,7 @@ def viewtournament():
         names.append(result['t_name'])  # can also be accessed using result[0]
       cursor.close() 
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("viewtournament.html", **context)
@@ -305,7 +305,7 @@ def managetournament():
         names.append(result['t_name'])  # can also be accessed using result[0]
       cursor.close() 
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("managetournament.html", **context)
@@ -319,7 +319,7 @@ def insertParticipants():
         names.append(result['name'] + "," + str(result['sid'])) # can also be accessed using result[0]
       cursor.close() 
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("insertParticipants.html", **context)
@@ -338,7 +338,7 @@ def registerStudentIntoTeam():
           names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
         cursor.close()
     except:
-        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
     context = dict(data = names)
     print(session['my_var'], session['cid'])
     return render_template("registerTeam.html", **context)
@@ -365,7 +365,7 @@ def registerIntoTeam():
         names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("viewteam.html", **context)
@@ -389,7 +389,7 @@ def insertRecord():
         names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('viewroundmanage.html', **context)
@@ -409,7 +409,7 @@ def insertStudents():
         names.append(result['name'] + "," + result['sid'])  # can also be accessed using result[0]
       cursor.close() 
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("insertParticipants.html", **context)
@@ -426,7 +426,7 @@ def insertTeam():
           names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
         cursor.close()
     except:
-        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
     
     context = dict(data = names)
     return render_template("viewteam.html", **context)
@@ -440,7 +440,7 @@ def insertJudges():
         names.append(result['name'])  # can also be accessed using result[0]
       cursor.close() 
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("insertJudges.html", **context)
@@ -458,7 +458,7 @@ def insertJudging():
         names.append(result['name'])  # can also be accessed using result[0]
       cursor.close() 
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("insertJudges.html", **context)
@@ -473,7 +473,7 @@ def insertTournament():
         names.append(result['t_name'])  # can also be accessed using result[0]
       cursor.close() 
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("insertTournament.html", **context)
@@ -491,7 +491,7 @@ def insertTournamenting():
         names.append(result['t_name'])  # can also be accessed using result[0]
       cursor.close() 
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template("insertTournament.html", **context)
@@ -515,7 +515,7 @@ def schoolByWins():
           names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('school.html', **context)
@@ -532,7 +532,7 @@ def schoolByPoints():
           names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('school.html', **context)
@@ -550,7 +550,7 @@ def studentByWins():
           names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('student.html', **context)
@@ -566,7 +566,7 @@ def studentByPoints():
           names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('student.html', **context)
@@ -584,7 +584,7 @@ def teamByWins():
           names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('team.html', **context)
@@ -600,7 +600,7 @@ def teamByPoints():
           names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('team.html', **context)
@@ -619,7 +619,7 @@ def findStudentID():
           names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
       
   context = dict(data = names)
   return render_template('student2.html', **context)
@@ -651,7 +651,7 @@ def studentID():
           names.append("CIRCUIT RANK: " + str(result[0]))
       cursor2.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('student.html', **context)
@@ -680,7 +680,7 @@ def teamInRounds():
       cursor.close()
       print(names)
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('viewround.html', **context)
@@ -695,7 +695,7 @@ def findStudentSchool():
           names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('studentSchool.html', **context)
@@ -719,7 +719,7 @@ def studentToSchool():
         names.append(result['school_name'] + "," + str(result['school_state']))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('viewschool.html', **context)
@@ -734,7 +734,7 @@ def findStudentIDTeams():
           names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
       cursor.close()
   except:
-      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
   context = dict(data = names)
   return render_template('team2.html', **context)
@@ -753,7 +753,7 @@ def viewStudentsInTeam():
         print(names)
         cursor.close()
     except:
-        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
     context = dict(data = names)
     return render_template('viewstudent.html', **context)
@@ -773,7 +773,7 @@ def viewStudentsInSchool():
         print(names)
         cursor.close()
     except:
-        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
     context = dict(data = names)
     return render_template('viewstudent.html', **context)
@@ -789,7 +789,7 @@ def viewRoundInTournament():
             names.append(result[0])
         cursor.close()
     except:
-        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
     context = dict(data = names)
     return render_template('viewroundtourn.html', **context)
@@ -805,7 +805,7 @@ def viewRoundInTournamentManage():
             names.append(result[0])
         cursor.close()
     except:
-        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
     context = dict(data = names)
     return render_template('viewroundtournmanage.html', **context)
@@ -821,7 +821,7 @@ def viewRoundInfo():
             names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
         cursor.close()
     except:
-        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
     context = dict(data = names)
     return render_template('viewround.html', **context)
@@ -839,7 +839,7 @@ def viewRoundInfoManage():
             names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
         cursor.close()
     except:
-        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE DON'T CLICK GO BACK"]
 
     context = dict(data = names)
     return render_template('viewroundmanage.html', **context)
