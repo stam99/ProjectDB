@@ -154,94 +154,129 @@ def index():
 #
 @app.route('/school')
 def school():
-  cursor = g.conn.execute("SELECT name, state FROM school")
-  names = []
-  for result in cursor:
-    names.append(result[0] + " " + result[1])  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT name, state FROM school")
+      names = []
+      for result in cursor:
+        names.append(result[0] + " " + result[1])  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("school.html", **context)
 
 @app.route('/viewschool')
 def viewschool():
-  cursor = g.conn.execute("SELECT name, state FROM school")
-  names = []
-  for result in cursor:
-    names.append(result['name'] + "," + str(result['state']))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT name, state FROM school")
+      names = []
+      for result in cursor:
+        names.append(result['name'] + "," + str(result['state']))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("viewschool.html", **context)
 
 
 @app.route('/student')
 def student():
-  cursor = g.conn.execute("SELECT name FROM students")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT name FROM students")
+      names = []
+      for result in cursor:
+        names.append(result['name'])  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("student.html", **context)
 
 
 @app.route('/viewstudent')
 def viewstudent():
-  cursor = g.conn.execute("SELECT name FROM students")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT name FROM students")
+      names = []
+      for result in cursor:
+        names.append(result['name'])  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
   context = dict(data = names)
   return render_template("viewstudent.html", **context)
 
 @app.route('/team')
 def team():
-  cursor = g.conn.execute("SELECT team_name FROM team")
-  names = []
-  for result in cursor:
-    names.append(result['team_name'])  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT team_name FROM team")
+      names = []
+      for result in cursor:
+        names.append(result['team_name'])  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("team.html", **context)
 
 @app.route('/viewteam')
 def viewteam():
-  cursor = g.conn.execute("SELECT team_name, cid FROM team")
-  names = []
-  for result in cursor:
-    names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT team_name, cid FROM team")
+      names = []
+      for result in cursor:
+        names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("viewteam.html", **context)
 
 @app.route('/viewtournament')
 def viewtournament():
-  cursor = g.conn.execute("SELECT t_name FROM tournament")
-  names = []
-  for result in cursor:
-    names.append(result['t_name'])  # can also be accessed using result[0]
-  cursor.close() 
+  try:
+      cursor = g.conn.execute("SELECT t_name FROM tournament")
+      names = []
+      for result in cursor:
+        names.append(result['t_name'])  # can also be accessed using result[0]
+      cursor.close() 
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("viewtournament.html", **context)
 
 
 @app.route('/managetournament')
 def managetournament():
-  cursor = g.conn.execute("SELECT t_name FROM tournament")
-  names = []
-  for result in cursor:
-    names.append(result['t_name'])  # can also be accessed using result[0]
-  cursor.close() 
+  try:
+      cursor = g.conn.execute("SELECT t_name FROM tournament")
+      names = []
+      for result in cursor:
+        names.append(result['t_name'])  # can also be accessed using result[0]
+      cursor.close() 
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("managetournament.html", **context)
 
 @app.route('/insertParticipants')
 def insertParticipants():
-  cursor = g.conn.execute("SELECT name, sid FROM students")
-  names = []
-  for result in cursor:
-    names.append(result['name'] + "," + str(result['sid'])) # can also be accessed using result[0]
-  cursor.close() 
+  try:
+      cursor = g.conn.execute("SELECT name, sid FROM students")
+      names = []
+      for result in cursor:
+        names.append(result['name'] + "," + str(result['sid'])) # can also be accessed using result[0]
+      cursor.close() 
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("insertParticipants.html", **context)
 
@@ -252,11 +287,14 @@ def registerStudentIntoTeam():
     sql = "INSERT INTO DebatesFor_EnrollsIn(cid, team_name, sid, school_state, school_name) VALUES(%s, %s, " + data[1] + ", %s, %s)"
     session['my_var'] = sql
     session['cid'] = data[1]
-    cursor = g.conn.execute("SELECT team_name, cid FROM team")
-    names = []
-    for result in cursor:
-      names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
-    cursor.close()
+    try:
+        cursor = g.conn.execute("SELECT team_name, cid FROM team")
+        names = []
+        for result in cursor:
+          names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
+        cursor.close()
+    except:
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
     context = dict(data = names)
     print(session['my_var'], session['cid'])
     return render_template("registerTeam.html", **context)
@@ -271,16 +309,20 @@ def registerIntoTeam():
   cid = query[1]
   team_name = query[0] 
   school_name, school_state = None, None
-  cursor2 = g.conn.execute("SELECT DFEI.school_state, DFEI.school_name FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.team_name = %s  AND DFEI.cid = %s", team_name, cid)
-  for result in cursor2:
-    school_name = result['school_name']
-    school_state = result['school_state']
-  g.conn.execute(data, cid, team_name, school_state, school_name)
-  cursor = g.conn.execute("SELECT team_name, cid FROM team")
-  names = []
-  for result in cursor:
-    names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor2 = g.conn.execute("SELECT DFEI.school_state, DFEI.school_name FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.team_name = %s  AND DFEI.cid = %s", team_name, cid)
+      for result in cursor2:
+        school_name = result['school_name']
+        school_state = result['school_state']
+      g.conn.execute(data, cid, team_name, school_state, school_name)
+      cursor = g.conn.execute("SELECT team_name, cid FROM team")
+      names = []
+      for result in cursor:
+        names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("viewteam.html", **context)
 
@@ -295,12 +337,16 @@ def insertRecord():
   circuit_region = request.form['circuit_region']
   j_id = request.form['j_id']
   won = request.form['won']
-  g.conn.execute("INSERT INTO ParticipatesIn_RegisteredWith(cid, team_name, j_id, t_name, number, speaker_points, circuit_name, region, won) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", cid, team_name, j_id, t_name, number, speaker_points, circuit_name, circuit_region, won)
-  cursor = g.conn.execute("SELECT DISTINCT AR.cid, AR.team_name, AR.j_id, AR.speaker_points, AR.won FROM Aggregate_Rounds AR WHERE AR.t_name = %s AND AR.number = %s", t_name, number)
-  names = []
-  for result in cursor:
-    names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
-  cursor.close()
+  try:
+      g.conn.execute("INSERT INTO ParticipatesIn_RegisteredWith(cid, team_name, j_id, t_name, number, speaker_points, circuit_name, region, won) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", cid, team_name, j_id, t_name, number, speaker_points, circuit_name, circuit_region, won)
+      cursor = g.conn.execute("SELECT DISTINCT AR.cid, AR.team_name, AR.j_id, AR.speaker_points, AR.won FROM Aggregate_Rounds AR WHERE AR.t_name = %s AND AR.number = %s", t_name, number)
+      names = []
+      for result in cursor:
+        names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('viewroundmanage.html', **context)
 
@@ -311,12 +357,16 @@ def insertStudents():
   gender = request.form['gender']
   school_name = request.form['school_name']
   school_state = request.form['school_state']
-  g.conn.execute("INSERT INTO Students (sid, name, gender) VALUES (%s, %s, %s);", sid, name, gender)
-  cursor = g.conn.execute("SELECT name, sid FROM students")
-  names = []
-  for result in cursor:
-    names.append(result['name'] + "," + result['sid'])  # can also be accessed using result[0]
-  cursor.close() 
+  try:
+      g.conn.execute("INSERT INTO Students (sid, name, gender) VALUES (%s, %s, %s);", sid, name, gender)
+      cursor = g.conn.execute("SELECT name, sid FROM students")
+      names = []
+      for result in cursor:
+        names.append(result['name'] + "," + result['sid'])  # can also be accessed using result[0]
+      cursor.close() 
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("insertParticipants.html", **context)
 
@@ -324,22 +374,30 @@ def insertStudents():
 def insertTeam():
     team_name = request.form['name']
     cid = session.get('cid', None)
-    g.conn.execute("INSERT INTO Team(team_name, cid) VALUES(%s, %s)", team_name, cid)
-    cursor = g.conn.execute("SELECT team_name, cid FROM team")
-    names = []
-    for result in cursor:
-      names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
-    cursor.close()
+    try:
+        g.conn.execute("INSERT INTO Team(team_name, cid) VALUES(%s, %s)", team_name, cid)
+        cursor = g.conn.execute("SELECT team_name, cid FROM team")
+        names = []
+        for result in cursor:
+          names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
+        cursor.close()
+    except:
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+    
     context = dict(data = names)
     return render_template("viewteam.html", **context)
 
 @app.route('/insertJudges')
 def insertJudges():
-  cursor = g.conn.execute("SELECT name FROM judge")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close() 
+  try:
+      cursor = g.conn.execute("SELECT name FROM judge")
+      names = []
+      for result in cursor:
+        names.append(result['name'])  # can also be accessed using result[0]
+      cursor.close() 
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("insertJudges.html", **context)
 
@@ -348,23 +406,31 @@ def insertJudging():
   name = request.form['name']
   sid = request.form['sid']
   gender = request.form['gender']
-  g.conn.execute("INSERT INTO Judge(j_id, name, gender) VALUES (%s, %s, %s);", sid, name, gender)
-  cursor = g.conn.execute("SELECT name FROM judge")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close() 
+  try:
+      g.conn.execute("INSERT INTO Judge(j_id, name, gender) VALUES (%s, %s, %s);", sid, name, gender)
+      cursor = g.conn.execute("SELECT name FROM judge")
+      names = []
+      for result in cursor:
+        names.append(result['name'])  # can also be accessed using result[0]
+      cursor.close() 
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("insertJudges.html", **context)
 
 
 @app.route('/insertTournament')
 def insertTournament():
-  cursor = g.conn.execute("SELECT t_name FROM tournament")
-  names = []
-  for result in cursor:
-    names.append(result['t_name'])  # can also be accessed using result[0]
-  cursor.close() 
+  try:
+      cursor = g.conn.execute("SELECT t_name FROM tournament")
+      names = []
+      for result in cursor:
+        names.append(result['t_name'])  # can also be accessed using result[0]
+      cursor.close() 
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("insertTournament.html", **context)
 
@@ -373,12 +439,16 @@ def insertTournament():
 def insertTournamenting():
   name = request.form['t_name']
   state = request.form['state']
-  g.conn.execute("INSERT INTO Tournament(t_name, state) VALUES (%s, %s);", name, state)
-  cursor = g.conn.execute("SELECT t_name FROM tournament")
-  names = []
-  for result in cursor:
-    names.append(result['t_name'])  # can also be accessed using result[0]
-  cursor.close() 
+  try:
+      g.conn.execute("INSERT INTO Tournament(t_name, state) VALUES (%s, %s);", name, state)
+      cursor = g.conn.execute("SELECT t_name FROM tournament")
+      names = []
+      for result in cursor:
+        names.append(result['t_name'])  # can also be accessed using result[0]
+      cursor.close() 
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template("insertTournament.html", **context)
 
@@ -386,6 +456,7 @@ def insertTournamenting():
 @app.route('/add', methods=['POST'])
 def add():
   name = request.form['name']
+  
   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
   return redirect('/')
 
@@ -393,11 +464,15 @@ def add():
 def schoolByWins():
   circuit_region = request.form['circuit_region']
   circuit_name = request.form['circuit_name']
-  cursor = g.conn.execute("SELECT AR.school_name, AR.school_state, ROUND(AVG(AR.won::INT),3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.school_name, AR.school_state ORDER BY AVG(AR.won::INT) DESC;", circuit_name, circuit_region)
-  names = []
-  for result in cursor:
-      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT AR.school_name, AR.school_state, ROUND(AVG(AR.won::INT),3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.school_name, AR.school_state ORDER BY AVG(AR.won::INT) DESC;", circuit_name, circuit_region)
+      names = []
+      for result in cursor:
+          names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('school.html', **context)
 
@@ -406,11 +481,15 @@ def schoolByPoints():
   circuit_region = request.form['circuit_region']
   circuit_name = request.form['circuit_name']
   print(circuit_name, circuit_region)
-  cursor = g.conn.execute("SELECT AR.school_name, AR.school_state, ROUND(AVG(AR.speaker_points)::numeric,3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.school_name, AR.school_state ORDER BY AVG(AR.speaker_points) DESC;", circuit_name, circuit_region)
-  names = []
-  for result in cursor:
-      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT AR.school_name, AR.school_state, ROUND(AVG(AR.speaker_points)::numeric,3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.school_name, AR.school_state ORDER BY AVG(AR.speaker_points) DESC;", circuit_name, circuit_region)
+      names = []
+      for result in cursor:
+          names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('school.html', **context)
 
@@ -420,11 +499,15 @@ def schoolByPoints():
 def studentByWins():
   circuit_region = request.form['circuit_region']
   circuit_name = request.form['circuit_name']
-  cursor = g.conn.execute("SELECT AR.sid, AR.student_name, ROUND(AVG(AR.won::INT),3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.won::INT) DESC;", circuit_name, circuit_region)
-  names = []
-  for result in cursor:
-      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT AR.sid, AR.student_name, ROUND(AVG(AR.won::INT),3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.won::INT) DESC;", circuit_name, circuit_region)
+      names = []
+      for result in cursor:
+          names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('student.html', **context)
 
@@ -432,11 +515,15 @@ def studentByWins():
 def studentByPoints():
   circuit_region = request.form['circuit_region']
   circuit_name = request.form['circuit_name']
-  cursor = g.conn.execute("SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric,3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC;", circuit_name, circuit_region)
-  names = []
-  for result in cursor:
-      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric,3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC;", circuit_name, circuit_region)
+      names = []
+      for result in cursor:
+          names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('student.html', **context)
 
@@ -446,11 +533,15 @@ def studentByPoints():
 def teamByWins():
   circuit_region = request.form['circuit_region']
   circuit_name = request.form['circuit_name']
-  cursor = g.conn.execute("SELECT AR.cid, AR.team_name, ROUND(AVG(AR.won::INT),3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.cid, AR.team_name ORDER BY AVG(AR.won::INT) DESC;", circuit_name, circuit_region)
-  names = []
-  for result in cursor:
-      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT AR.cid, AR.team_name, ROUND(AVG(AR.won::INT),3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.cid, AR.team_name ORDER BY AVG(AR.won::INT) DESC;", circuit_name, circuit_region)
+      names = []
+      for result in cursor:
+          names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('team.html', **context)
 
@@ -458,11 +549,15 @@ def teamByWins():
 def teamByPoints():
   circuit_region = request.form['circuit_region']
   circuit_name = request.form['circuit_name']
-  cursor = g.conn.execute("SELECT AR.cid, AR.team_name, ROUND(AVG(AR.speaker_points)::numeric,3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.cid, AR.team_name ORDER BY AVG(AR.speaker_points) DESC;", circuit_name, circuit_region)
-  names = []
-  for result in cursor:
-      names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT AR.cid, AR.team_name, ROUND(AVG(AR.speaker_points)::numeric,3) FROM Aggregate_Rounds AR WHERE AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.cid, AR.team_name ORDER BY AVG(AR.speaker_points) DESC;", circuit_name, circuit_region)
+      names = []
+      for result in cursor:
+          names.append((result[0], result[1], result[2]))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('team.html', **context)
 
@@ -473,11 +568,15 @@ def teamByPoints():
 @app.route('/findStudentID', methods=['POST'])
 def findStudentID():
   student_name = '%' + request.form['student_name'] + '%'
-  cursor = g.conn.execute("SELECT DISTINCT AR.student_name, AR.school_name, AR.sid, AR.circuit_name, AR.region FROM Aggregate_Rounds AR WHERE AR.student_name LIKE %s", student_name)  
-  names = []
-  for result in cursor:
-      names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT DISTINCT AR.student_name, AR.school_name, AR.sid, AR.circuit_name, AR.region FROM Aggregate_Rounds AR WHERE AR.student_name LIKE %s", student_name)  
+      names = []
+      for result in cursor:
+          names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+      
   context = dict(data = names)
   return render_template('student2.html', **context)
 
@@ -496,16 +595,20 @@ def studentID():
   student_id = data[2]
   circuit_name = data[3]
   circuit_region = data[4]
-  cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",student_id)
-  cursor2 = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR WHERE  AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",circuit_name, circuit_region, student_id) 
-  names = []
-  names.append("Rankings for :" + data[0])
-  for result in cursor:
-      names.append("OVERALL RANK: " + str(result[0])) 
-  cursor.close()
-  for result in cursor2:
-      names.append("CIRCUIT RANK: " + str(result[0]))
-  cursor2.close()
+  try:
+      cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",student_id)
+      cursor2 = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR WHERE  AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",circuit_name, circuit_region, student_id) 
+      names = []
+      names.append("Rankings for :" + data[0])
+      for result in cursor:
+          names.append("OVERALL RANK: " + str(result[0])) 
+      cursor.close()
+      for result in cursor2:
+          names.append("CIRCUIT RANK: " + str(result[0]))
+      cursor2.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('student.html', **context)
 
@@ -525,23 +628,31 @@ def teamInRounds():
   circuit_name = data[3]
   circuit_region = data[4]
   cursor = None
-  cursor = g.conn.execute("SELECT PIRW.team_name, PIRW.cid, PIRW.speaker_points, PIRW.won, PIRW.t_name, PIRW.number FROM ParticipatesIn_RegisteredWith as PIRW WHERE PIRW.cid = %s AND PIRW.circuit_name = %s AND PIRW.region = %s", student_id, circuit_name, circuit_region)
-  names = []
-  for result in cursor:
-      names.append(result['team_name'] + "," + str(result['cid']) + ", STATUS WON:" + str(result[3]) + "," + str(result[4]) + "," + str(result[5]))
-  cursor.close()
-  print(names)
+  try:
+      cursor = g.conn.execute("SELECT PIRW.team_name, PIRW.cid, PIRW.speaker_points, PIRW.won, PIRW.t_name, PIRW.number FROM ParticipatesIn_RegisteredWith as PIRW WHERE PIRW.cid = %s AND PIRW.circuit_name = %s AND PIRW.region = %s", student_id, circuit_name, circuit_region)
+      names = []
+      for result in cursor:
+          names.append(result['team_name'] + "," + str(result['cid']) + ", STATUS WON:" + str(result[3]) + "," + str(result[4]) + "," + str(result[5]))
+      cursor.close()
+      print(names)
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('viewround.html', **context)
 
 @app.route('/findStudentSchool', methods = ['POST'])
 def findStudentSchool():
   student_name = '%' + request.form['student_name'] + '%'
-  cursor = g.conn.execute("SELECT DISTINCT AR.student_name, AR.school_name, AR.sid, AR.circuit_name, AR.region FROM Aggregate_Rounds AR WHERE AR.student_name LIKE %s", student_name)  
-  names = []
-  for result in cursor:
-      names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT DISTINCT AR.student_name, AR.school_name, AR.sid, AR.circuit_name, AR.region FROM Aggregate_Rounds AR WHERE AR.student_name LIKE %s", student_name)  
+      names = []
+      for result in cursor:
+          names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('studentSchool.html', **context)
 
@@ -557,22 +668,30 @@ def studentToSchool():
   data = parse_string(string)
   student_id = data[2]
   query = "SELECT DISTINCT AR.school_name, AR.school_state FROM Aggregate_Rounds as AR WHERE AR.sid = %s"
-  cursor = g.conn.execute(query, student_id)
-  names = []
-  for result in cursor:
-    names.append(result['school_name'] + "," + str(result['school_state']))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute(query, student_id)
+      names = []
+      for result in cursor:
+        names.append(result['school_name'] + "," + str(result['school_state']))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('viewschool.html', **context)
 
 @app.route('/findStudentIDTeams', methods=['POST'])
 def findStudentIDTeams():
   student_name = '%' + request.form['student_name'] + '%'
-  cursor = g.conn.execute("SELECT DISTINCT AR.student_name, AR.school_name, AR.sid, AR.circuit_name, AR.region FROM Aggregate_Rounds AR WHERE AR.student_name LIKE %s", student_name)  
-  names = []
-  for result in cursor:
-      names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
-  cursor.close()
+  try:
+      cursor = g.conn.execute("SELECT DISTINCT AR.student_name, AR.school_name, AR.sid, AR.circuit_name, AR.region FROM Aggregate_Rounds AR WHERE AR.student_name LIKE %s", student_name)  
+      names = []
+      for result in cursor:
+          names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
+      cursor.close()
+  except:
+      names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
   context = dict(data = names)
   return render_template('team2.html', **context)
 
@@ -581,13 +700,17 @@ def viewStudentsInTeam():
     data = request.args.get('query')
     string = data.split(",")
     print(string)
-    cursor = g.conn.execute("SELECT Students.name, Students.sid FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.cid = %s AND DFEI.team_name = %s AND DFEI.sid = Students.sid", string[1], string[0])
-    names = []
-    names.append("All of the students in team " + string[0])
-    for result in cursor:
-        names.append(result[0])
-    print(names)
-    cursor.close()
+    try:
+        cursor = g.conn.execute("SELECT Students.name, Students.sid FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.cid = %s AND DFEI.team_name = %s AND DFEI.sid = Students.sid", string[1], string[0])
+        names = []
+        names.append("All of the students in team " + string[0])
+        for result in cursor:
+            names.append(result[0])
+        print(names)
+        cursor.close()
+    except:
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
     context = dict(data = names)
     return render_template('viewstudent.html', **context)
 #School
@@ -597,13 +720,17 @@ def viewStudentsInSchool():
     data = request.args.get('query')
     string = data.split(",")
     print(string)
-    cursor = g.conn.execute("SELECT DISTINCT Students.name, Students.sid FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.school_name = %s AND DFEI.school_state = %s AND DFEI.sid = Students.sid", string[0], string[1])
-    names = []
-    names.append("All of the students in school " + string[0])
-    for result in cursor:
-        names.append(result[0] + " " + str(result[1]))
-    print(names)
-    cursor.close()
+    try:
+        cursor = g.conn.execute("SELECT DISTINCT Students.name, Students.sid FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.school_name = %s AND DFEI.school_state = %s AND DFEI.sid = Students.sid", string[0], string[1])
+        names = []
+        names.append("All of the students in school " + string[0])
+        for result in cursor:
+            names.append(result[0] + " " + str(result[1]))
+        print(names)
+        cursor.close()
+    except:
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
     context = dict(data = names)
     return render_template('viewstudent.html', **context)
 
@@ -611,11 +738,15 @@ def viewStudentsInSchool():
 def viewRoundInTournament():
     data = request.args.get('query')
     session['t_name'] = data
-    cursor = g.conn.execute("SELECT R.number FROM Tournament T, Round R WHERE T.t_name = R.t_name AND T.t_name = %s", data)
-    names = []
-    for result in cursor:
-        names.append(result[0])
-    cursor.close()
+    try:
+        cursor = g.conn.execute("SELECT R.number FROM Tournament T, Round R WHERE T.t_name = R.t_name AND T.t_name = %s", data)
+        names = []
+        for result in cursor:
+            names.append(result[0])
+        cursor.close()
+    except:
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
     context = dict(data = names)
     return render_template('viewroundtourn.html', **context)
 
@@ -623,11 +754,15 @@ def viewRoundInTournament():
 def viewRoundInTournamentManage():
     data = request.args.get('query')
     session['t_name'] = data
-    cursor = g.conn.execute("SELECT R.number FROM Tournament T, Round R WHERE T.t_name = R.t_name AND T.t_name = %s", data)
-    names = []
-    for result in cursor:
-        names.append(result[0])
-    cursor.close()
+    try:
+        cursor = g.conn.execute("SELECT R.number FROM Tournament T, Round R WHERE T.t_name = R.t_name AND T.t_name = %s", data)
+        names = []
+        for result in cursor:
+            names.append(result[0])
+        cursor.close()
+    except:
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
     context = dict(data = names)
     return render_template('viewroundtournmanage.html', **context)
 
@@ -635,11 +770,15 @@ def viewRoundInTournamentManage():
 def viewRoundInfo():
     number = request.args.get('query')
     t_name = session['t_name']
-    cursor = g.conn.execute("SELECT DISTINCT AR.cid, AR.team_name, AR.j_id, AR.speaker_points, AR.won FROM Aggregate_Rounds AR WHERE AR.t_name = %s AND AR.number = %s", t_name, number)
-    names = []
-    for result in cursor:
-        names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
-    cursor.close()
+    try:
+        cursor = g.conn.execute("SELECT DISTINCT AR.cid, AR.team_name, AR.j_id, AR.speaker_points, AR.won FROM Aggregate_Rounds AR WHERE AR.t_name = %s AND AR.number = %s", t_name, number)
+        names = []
+        for result in cursor:
+            names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
+        cursor.close()
+    except:
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
     context = dict(data = names)
     return render_template('viewround.html', **context)
 
@@ -649,11 +788,15 @@ def viewRoundInfoManage():
     number = request.args.get('query')
     t_name = session['t_name']
     session['number'] = number
-    cursor = g.conn.execute("SELECT DISTINCT AR.cid, AR.team_name, AR.j_id, AR.speaker_points, AR.won FROM Aggregate_Rounds AR WHERE AR.t_name = %s AND AR.number = %s", t_name, number)
-    names = []
-    for result in cursor:
-        names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
-    cursor.close()
+    try:
+        cursor = g.conn.execute("SELECT DISTINCT AR.cid, AR.team_name, AR.j_id, AR.speaker_points, AR.won FROM Aggregate_Rounds AR WHERE AR.t_name = %s AND AR.number = %s", t_name, number)
+        names = []
+        for result in cursor:
+            names.append("Team captain id: " + str(result[0]) + ", Team name: " + str(result[1]) + ", Judge ID: " + str(result[2]) + ", Speaker points: " + str(result[3]) + ", Did win: " + str(result[4]))
+        cursor.close()
+    except:
+        names = ["ERROR: INVALID INPUT TRY AGAIN PLEASE"]
+
     context = dict(data = names)
     return render_template('viewroundmanage.html', **context)
 
