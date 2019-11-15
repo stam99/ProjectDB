@@ -1,0 +1,23 @@
+
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>Click to find what teams student has participated in </h1>
+  <div>
+    {% for n in data %}
+    <td><a href = "/teamInRounds?query={{n}}">{{n}}</a></td>
+    <p></p>
+    {% endfor %}
+  </div>
+  <p> </p> 
+
+<p><a href="/team">Go back</a></p>
+<body>
+</html>

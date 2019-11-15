@@ -9,19 +9,20 @@
 
 
 <body>
-  <h1>Insert Students</h1>
-  <div>{{data}}</div>
+  <h1>Click to register student into a team</h1>
 
   <div>
     {% for n in data %}
-    <div>{{n}}</div>
+    <p> </p>
+    <td><a href = "/registerStudentIntoTeam?query={{n}}">{{n}}</a></td>
     {% endfor %}
   </div>
   <p> </p> 
 
-  <b> Insert Student</b>
+  <b> Insert new student</b>
 <form method="POST" action="/insertStudents">
 	<p><em>student id</em><input type="text" name="sid"><em>name</em><input type="text" name = "name"><em>gender</em><input type="text" name="gender"> <input type="submit" value="Insert"></p>
 </form>
-  
+
+
 </html>

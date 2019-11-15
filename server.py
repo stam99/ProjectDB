@@ -12,11 +12,10 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
-
+from flask import Flask, request, render_template, g, redirect, Response, session, url_for
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
-
+app.secret_key = 'dljsaklqk24e21cjn!Ew@@dsa5'
 
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
@@ -160,10 +159,10 @@ def index():
 #
 @app.route('/school')
 def school():
-  cursor = g.conn.execute("SELECT name FROM school")
+  cursor = g.conn.execute("SELECT name, state FROM school")
   names = []
   for result in cursor:
-    names.append(result[0])  # can also be accessed using result[0]
+    names.append(result[0] + " " + result[1])  # can also be accessed using result[0]
   cursor.close()
   context = dict(data = names)
   return render_template("school.html", **context)
@@ -178,6 +177,17 @@ def student():
   context = dict(data = names)
   return render_template("student.html", **context)
 
+
+@app.route('/viewstudent')
+def viewstudent():
+  cursor = g.conn.execute("SELECT name FROM students")
+  names = []
+  for result in cursor:
+    names.append(result['name'])  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template("viewstudent.html", **context)
+
 @app.route('/team')
 def team():
   cursor = g.conn.execute("SELECT team_name FROM team")
@@ -188,15 +198,67 @@ def team():
   context = dict(data = names)
   return render_template("team.html", **context)
 
-@app.route('/insertParticipants')
-def insertParticipants():
-  cursor = g.conn.execute("SELECT name FROM students")
+@app.route('/viewteam')
+def viewteam():
+  cursor = g.conn.execute("SELECT team_name, cid FROM team")
   names = []
   for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
+    names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template("viewteam.html", **context)
+
+@app.route('/insertParticipants')
+def insertParticipants():
+  cursor = g.conn.execute("SELECT name, sid FROM students")
+  names = []
+  for result in cursor:
+    names.append(result['name'] + "," + str(result['sid'])) # can also be accessed using result[0]
   cursor.close() 
   context = dict(data = names)
   return render_template("insertParticipants.html", **context)
+
+@app.route('/registerStudentIntoTeam')
+def registerStudentIntoTeam():
+    string = request.args.get('query')
+    data = string.split(",")
+    school_name, school_state = None, None
+    cursor2 = g.conn.execute("SELECT DFEI.school_state, DFEI.school_name FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.sid = Students.sid AND Students.sid = %s", data[1])
+    for result in cursor2:
+        school_name = "'"+ result['school_name'] + "'"
+        school_state = "'" +result['school_state'] + "'"
+    sql = "INSERT INTO DebatesFor_EnrollsIn(cid, team_name, sid, school_state, school_name) VALUES(%s, %s, " + data[1] + ", " + school_state + ", " + school_name +")"
+    session['my_var'] = sql
+    session['cid'] = data[1]
+    cursor = g.conn.execute("SELECT team_name, cid FROM team")
+    names = []
+    for result in cursor:
+      names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
+    cursor.close()
+    context = dict(data = names)
+    print(session['my_var'], session['cid'])
+    return render_template("registerTeam.html", **context)
+
+@app.route('/registerIntoTeam')
+def registerIntoTeam():
+  data = session.get('my_var', None)
+  print("OVER HERE")
+  print(data)
+  string = request.args.get('query')
+  print("HEREEEE")
+  print(string)
+
+  query = string.split(",")
+  cid = query[1]
+  team_name = query[0] 
+  g.conn.execute(data, cid, team_name)
+  cursor = g.conn.execute("SELECT team_name, cid FROM team")
+  names = []
+  for result in cursor:
+    names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template("viewteam.html", **context)
 
 @app.route('/insertStudents', methods=['POST'])
 def insertStudents():
@@ -211,6 +273,19 @@ def insertStudents():
   cursor.close() 
   context = dict(data = names)
   return render_template("insertParticipants.html", **context)
+
+@app.route('/insertTeam', methods=['POST'])
+def insertTeam():
+    team_name = request.form['name']
+    cid = session.get('cid', None)
+    g.conn.execute("INSERT INTO Team(team_name, cid) VALUES(%s, %s)", team_name, cid)
+    cursor = g.conn.execute("SELECT team_name, cid FROM team")
+    names = []
+    for result in cursor:
+      names.append(result['team_name'] + "," + str(result['cid']))  # can also be accessed using result[0]
+    cursor.close()
+    context = dict(data = names)
+    return render_template("registerTeam.html", **context)
 
 @app.route('/insertJudges')
 def insertJudges():
@@ -341,11 +416,8 @@ def studentID():
   string = request.args.get('query')
   def parse_string(string):
     split_list = string[1:-1].split(",")
-    
     for i, element in enumerate(split_list):
        split_list[i] = element.lstrip().replace("'","")
-
-        
     return split_list  
   data = parse_string(string)
   print(data)
@@ -353,28 +425,35 @@ def studentID():
   student_id = data[2]
   circuit_name = data[3]
   circuit_region = data[4]
-  #student_id = request.form['student_id']
-  #circuit_name = request.form['circuit_name']
-  #circuit_region = request.form['circuit_region']
-  cursor = None
-  if not circuit_name or not circuit_region:
-    cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",student_id)
-  else:
-    cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR WHERE  AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",circuit_name, circuit_region, student_id) 
-  
+  cursor = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",student_id)
+  cursor2 = g.conn.execute("WITH Student_Rank As(SELECT AR.sid, AR.student_name, ROUND(AVG(AR.speaker_points)::numeric, 3) AVG FROM Aggregate_rounds AR WHERE  AR.circuit_name LIKE %s AND AR.region LIKE %s GROUP BY AR.sid, AR.student_name ORDER BY AVG(AR.speaker_points) DESC) select count(*) + 1 from Student_Rank WHERE Student_Rank.AVG > (select Student_Rank.AVG from Student_Rank WHERE Student_Rank.sid = %s);",circuit_name, circuit_region, student_id) 
   names = []
+  names.append("Rankings for :" + data[0])
   for result in cursor:
-      names.append(result[0])  # can also be accessed using result[0]
+      names.append("OVERALL RANK: " + str(result[0])) 
   cursor.close()
+  for result in cursor2:
+      names.append("CIRCUIT RANK: " + str(result[0]))
+  cursor2.close()
   context = dict(data = names)
   return render_template('student.html', **context)
 
 
-@app.route('/teamInRounds', methods=['POST'])
+@app.route('/teamInRounds', methods=['GET','POST'])
 def teamInRounds():
-  student_id = request.form['student_id'] 
-  circuit_name = request.form['circuit_name']
-  circuit_region = request.form['circuit_region']
+  string = request.args.get('query')
+  def parse_string(string):
+    split_list = string[1:-1].split(",")
+    for i, element in enumerate(split_list):
+       split_list[i] = element.lstrip().replace("'","")
+    return split_list  
+  data = parse_string(string)
+  print(data)
+  print(data[2], data[3], data[4])
+  student_id = data[2]
+  circuit_name = data[3]
+  circuit_region = data[4]
+  cursor = None
   cursor = g.conn.execute("SELECT PIRW.team_name, PIRW.speaker_points, PIRW.won, PIRW.t_name, PIRW.number FROM ParticipatesIn_RegisteredWith as PIRW WHERE PIRW.cid = %s AND PIRW.circuit_name = %s AND PIRW.region = %s", student_id, circuit_name, circuit_region)
   names = []
   for result in cursor:
@@ -393,8 +472,23 @@ def findStudentIDTeams():
       names.append((result[0], result[1], result[2], result[3], result[4]))  # can also be accessed using result[0]
   cursor.close()
   context = dict(data = names)
-  return render_template('team.html', **context)
+  return render_template('team2.html', **context)
 
+
+@app.route('/viewStudentsInTeam', methods=['GET', 'POST'])
+def viewStudentsInTeam():
+    data = request.args.get('query')
+    string = data.split(",")
+    print(string)
+    cursor = g.conn.execute("SELECT Students.name, Students.sid FROM Students, DebatesFor_EnrollsIn DFEI WHERE DFEI.cid = %s AND DFEI.team_name = %s AND DFEI.sid = Students.sid", string[1], string[0])
+    names = []
+    names.append("All of the students in team " + string[0])
+    for result in cursor:
+        names.append(result[0])
+    print(names)
+    cursor.close()
+    context = dict(data = names)
+    return render_template('viewstudent.html', **context)
 #School
 
 @app.route('/login')
